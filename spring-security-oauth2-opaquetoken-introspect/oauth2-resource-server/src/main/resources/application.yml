@@ -1,0 +1,8 @@
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        opaquetoken:
+          introspection-uri: https://dev-7571110.okta.com/oauth2/default/v1/introspect
+          client-id: 0oa13xsm1CsN8v6uq5d6
+          client-secret: 2cKnFAFH-sqvent_1lPOlVNzyf6JktFnN2xLPf-n
