@@ -57,6 +57,12 @@ $ netstat # 查看TCP/IP通信情况
 [[transport-layer]]
 == 传输层
 
+[%hardbreaks]
+*为什么需要传输层？*
+首先应用层协商了使用同一个应用的两台主机应该以什么样的格式传递数据，
+但是应用层并不关心数据是怎么传输的，
+传输这件事是传输层以及它的下层来完成的。
+
 image::images/TCP_UDP_headers.jpg[]
 
 [%header]
