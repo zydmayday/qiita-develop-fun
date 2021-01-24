@@ -1,7 +1,21 @@
 :toc: left
 
+[[objective]]
+== 目标
+
+What?::
+  什么是TCP/IP五层模型，分别有什么？
+How?::
+  五层分别实现了什么？靠什么方式实现的？
+Why?::
+  为什么需要五层？互相之间存在什么要的关系？
+
 [[overview]]
 == 总览
+
+=== 和OSI七层参考模型的区别？
+
+OSI更多的是一个参考模型，而TCP/IP模型则是一个具体的模型且已经被广泛实践。
 
 === TCP/IP五层模型分别有哪五层？
 
@@ -22,15 +36,13 @@
 
 image::images/tcpip_5_layer_overview.png[]
 
-=== 和OSI七层参考模型的区别？
-
-OSI更多的是一个参考模型，而TCP/IP模型则是一个具体的模型且已经被广泛实践。
-
 [[application-layer]]
 == 应用层
 
 一个例子，如何发送HTTP请求：
-https://colab.research.google.com/drive/1VvXp1HOgs1O8oc2tKt-8RgRBPfKeyDNw
+```sh
+$ node http-server.js # 启动服务器
+```
 
 [[application-layer-port]]
 === 端口
@@ -44,6 +56,7 @@ https://colab.research.google.com/drive/1VvXp1HOgs1O8oc2tKt-8RgRBPfKeyDNw
 |22 | SSH
 |80 | HTTP 
 |443 | HTTPs
+|1521 | Oracle
 |===
 
 [%hardbreaks]
@@ -104,10 +117,10 @@ $ tcpdump -i eth0 -nn # listen to eth0
 11:10:49.077061 IP 172.17.0.2.33446 > 119.63.197.139.80: Flags [.], ack 2783, win 501, length 0
 ----
 
+三次握手完成之后，内核会开辟资源供应用层使用。
+
 [[network-layer]]
 == 网络层
-
-image::images/IPv4_header.jpg[]
 
 [%hardbreaks]
 *为什么要有网络层？*
@@ -124,6 +137,8 @@ image::images/IPv4_header.jpg[]
 
 === 报文详解
 
+image::images/IPv4_header.jpg[]
+
 .IP报文头
 [%header, cols="2,5a"]
 |===
@@ -131,13 +146,13 @@ image::images/IPv4_header.jpg[]
 |Version | 版本号, ipv4还是ipv6
 |IHL | IP头部长度，多少个32bit，32/8=4字节，2^4^=16, 15 * 4 = 60字节，最大长度 
 |TotalLength | 报文长度
-|Identification | 主机标识，如果在数据链路层被分片，则共享同一标识
-|Flags | 分片相关。
+|Identification | 主机标识，如果路由器对大型数据包进行分段操作，所有分段共享同一标识
+|Flags | 分段相关。
 
 * 第二位为1，禁止分片
 * 第三位标识更多分片，如果分片的话，最后一个分片为1，其他为0
 
-|Fragment Offset | 分片偏移量
+|Fragment Offset | 分段偏移量
 |Time To Live | 报文到达目的地的最大跳数
 |Protocol | 上层协议类型
 |Header Checksum | 头部校验，检验是否损坏
@@ -148,16 +163,25 @@ image::images/IPv4_header.jpg[]
 
 === 子网划分和子网掩码
 
-.网络分类
+.网络分类，传统的网络划分方式
 [%header, cols="2,5,3"]
 |===
 |类别 | 地址范围 | 例子
-|A类 | 0.0.0.0到127.255.255.255 | 0 + 网络号(7) + 主机号(24)
-|B类 | 128.0.0.0到191.255.255.255 | 10 + 网络号(14) + 主机号(16)
-|C类 | 192.0.0.0到223.255.255.255 | 110 + 网络号(21) + 主机号(8)
-|D类 | 224.0.0.0到239.255.255.255 | 1110 + 多播组合(28)
-|E类 | 240.0.0.0到247.255.255.255 | 11110 + 待用(27)
+|A类 | ``0.0.0.0``到``127.255.255.255`` | 0 + 网络号(7) + 主机号(24)
+|B类 | ``128.0.0.0``到``191.255.255.255`` | 10 + 网络号(14) + 主机号(16)
+|C类 | ``192.0.0.0``到``223.255.255.255`` | 110 + 网络号(21) + 主机号(8)
+|D类 | ``224.0.0.0``到``239.255.255.255`` | 1110 + 多播组合(28)
+|E类 | ``240.0.0.0``到``247.255.255.255`` | 11110 + 待用(27)
 |===
+
+[%hardbreaks]
+*概念理解*
+IP地址是以**网络号**和**主机号**来识别网络上的主机的。
+同一个网络号下的主机才可以互通，不同网络号下的主机要通过网关互联。
+
+[%hardbreaks]
+例如：
+``12.0.0.1``和``13.0.0.1``分属不同的网络号，所以他们之间是不能通信的。
 
 为什么需要子网划分？::
   传统的划分网络的方式，ABCDE五等级局限性太大，很容易造成划分的浪费。 +
@@ -165,12 +189,6 @@ image::images/IPv4_header.jpg[]
   一旦分配完了，A类一共就2^7^个，其他人就没有的用了。
 
 因此，针对这种情况有人提出了新的解决方案，叫做CIDR(Classless Interdomain Routing)
-
-
-[%hardbreaks]
-*概念理解*
-IP地址是以**网络号**和**主机号**来识别网络上的主机的。
-同一个网络号下的主机才可以互通，不同网络号下的主机要通过网关互联。
 
 那么，为了使同一个网络下可以生成多个子网，就引出了子网掩码的概念。
 
@@ -215,6 +233,20 @@ default         172.17.0.1      0.0.0.0         UG    0      0        0 eth0
 . 如果目标地址就是自己的话，直接解析，交给传输层
 . 如果目标地址不是自己的话，则查看路由表转发给下一个节点
 
+[%hardbreaks]
+_查看路由表时会根据最长前缀匹配字段的算法进行转发。_
+例如：
+``192.168.20.16/28``
+``192.168.0.0/16``
+当查询``192.168.20.19``时第一个会被匹配。
+
+=== 相同网络号能够通信的本质
+
+[%hardbreaks]
+主机接受到相同网络号的IP地址，会保存在自己的本地路由中以便将来进行转发。
+如果每个主机都保存了所有的IP地址，那内存就爆炸啦！
+路由器因为配置了多个IP地址，所以可以在不同的子网之间转发数据。
+
 [[data-link-layer]]
 == 数据链路层
 
@@ -225,7 +257,7 @@ IP协议解决了发给谁的问题，但是实际上IP协议只规定了源地�
 那光有A和B的IP地址，显然数据包是没法一次性传过去的。
 这里就引入了数据链路层的概念。
 
-image::images/network.svg[]
+image::images/network.drawio.svg[]
 
 === ARP / 地址解析协议
 
@@ -280,6 +312,26 @@ $ docker network connect localNetwork lcal-ubuntu-3
 
 其他的不懂。太复杂。
 
+[[socket]]
+== Socket / 套接字
 
+image:images/httpatomoreillycomsourceoreillyimages60315.png[]
+
+[%hardbreaks]
+我们观察实际最后物理层传输的数据包后可以发现，
+实际上每一层都对应用层实际想要传输的数据进行了封装，
+保证该层可以利用这些**头部**来完成特定的任务。
+
+套接这个词本来也就是指两个东西接在一起，所以看上图来说可以说是很形象了。
+
+[[dataflow]]
+== 数据流
+
+image:images/dataflow.drawio.svg[]
+
+== 参考资料
+
+* https://ccie.lol/knowledge-base/ipv4-and-ipv6-packet-header/
+* https://www.oreilly.com/library/view/tcpip-network-administration/0596002971/ch01.html
 
 
