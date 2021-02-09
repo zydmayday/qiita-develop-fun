@@ -5,7 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="eba1ffe0-b5d1-4a1e-8839-bcc86aaa96c4" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../tcp-ip-5-model.adoc" beforeDir="false" afterPath="$PROJECT_DIR$/../tcp-ip-5-model.adoc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../http-example.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/../http-example.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -65,6 +66,9 @@
       <workItem from="1611232277233" duration="341000" />
       <workItem from="1611234168737" duration="718000" />
       <workItem from="1611448463713" duration="29000" />
+      <workItem from="1611890693566" duration="5000" />
+      <workItem from="1612247920095" duration="29000" />
+      <workItem from="1612248166595" duration="597000" />
     </task>
     <servers />
   </component>
