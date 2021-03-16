@@ -8,20 +8,20 @@ APはユーザからの入力を受け付け、その後SQLを実行するとユ
 
 このようなSQLがあるとします。
 ```sql
-select * from cpny_usrtbl where userid = '{{userid}}' and nm = '{{nm}}';
+select * from user where userid = '{{userid}}' and nm = '{{nm}}';
 ```
 
 ユーザからの入力は：
-- userid: 7194' or 1=1--
+- userid: 42' or 1=1--
 - nm: nm
 
 変換後のSQL
 ```sql
-select * from cpny_usrtbl where userid = '7194' or 1=1-- and nm = 'nm';
+select * from user where userid = '42' or 1=1-- and nm = 'nm';
 ```
 になる。
 
-こうして、7194というユーザだけではなく、全てのユーザ情報が抽出されてしまうだ。
+こうして、42というユーザだけではなく、全てのユーザ情報が抽出されてしまうだ。
 
 ## SQL injection (second order)
 
@@ -31,14 +31,14 @@ SQLiと違って、ユーザが入力した情報をその場で利用せず、�
 **例**
 
 まずユーザは新しいアカウントを作成します。
-useridは`7194';update cpny_usrtbl set passwd=xxx where userid = 'all'--`だとします。
+useridは`42';update user set passwd=xxx where userid = 'admin'--`だとします。
 
-ユーザ7194がログインするときに、下記のSQLが実行されると考えられます。
+ユーザ42がログインするときに、下記のSQLが実行されると考えられます。
 ```sql
-select * from cpny_usrtbl where userid = '7194';update cpny_usrtbl set passwd=xxx where userid = 'all'--';
+select * from user where userid = '42';update user set passwd=xxx where userid = 'admin'--';
 ```
 
-これで、allユーザのパスワードが変更され、攻撃者は次回にフル権限を持つallユーザでログインできるようになる。
+これで、adminユーザのパスワードが変更され、攻撃者は次回にフル権限を持つadminユーザでログインできるようになる。
 
 ## Sensitive Information Saved Unencrypted
 
@@ -52,14 +52,14 @@ select * from cpny_usrtbl where userid = '7194';update cpny_usrtbl set passwd=xx
 
 例えば画像ファイルの取得ロジックは以下のような場合：
 ```java
-File file =  new File('/hr/cjk/company_sv/images/' + imgFileName); // imgFileNameは別途から来たパラメータ
+File file =  new File('/application/src/images/' + imgFileName); // imgFileNameは別途から来たパラメータ
 return file.getCanonicalPath(); // 画像のフルパスを返す
 ```
 
 - logPath：../../../../etc/passwd 
 
 これで実際にロガーを作成する場所は
-`/hr/cjk/tomcat/webapp/../../../../etc/passwd` -> `/etc/passwd`になる。
+`/application/tomcat/webapp/../../../../etc/passwd` -> `/etc/passwd`になる。
 
 これでシステムのパスワードを漏洩する恐れがある。
 
