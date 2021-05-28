@@ -78,6 +78,32 @@ VSCとIdea両方にVimのプラグイン・エクステンションを入れて�
 - {：上の段落
 - }：下の段落
 
+### 使用頻度（中）：t文字 / f文字
+
+- t文字：文字の一個前のポジションにカーサーを移動させる。
+- f文字：文字のポジションにカーサーを移動させる。
+
+```js
+const a ='hello world'
+//    ↑ cursor is here
+// tl
+const a = 'hello world'
+//          ↑ cursor will goto here
+```
+
+```js
+const a ='hello world'
+//    ↑ cursor is here
+// fo
+const a = 'hello world'
+//             ↑ cursor will goto here
+// fo
+const a = 'hello world'
+//                ↑ cursor will goto here
+```
+
+> ヒント: なるべく頻度の低い文字でジャンプ。これで操作の回数を減らせます。
+
 ## モード切り替え
 
 ### 使用頻度（高）：Esc
@@ -325,29 +351,3 @@ const a ='hello'
 //            ↑ cursor is here
 const a = 'helloworld'
 ```
-
-### 使用頻度（中）：t文字 / f文字
-
-- t文字：文字の一個前のポジションにカーサーを移動させる。
-- f文字：文字のポジションにカーサーを移動させる。
-
-```js
-const a ='hello world'
-//    ↑ cursor is here
-// tl
-const a = 'hello world'
-//          ↑ cursor will goto here
-```
-
-```js
-const a ='hello world'
-//    ↑ cursor is here
-// fo
-const a = 'hello world'
-//             ↑ cursor will goto here
-// fo
-const a = 'hello world'
-//                ↑ cursor will goto here
-```
-
-> ヒント: なるべく頻度の低い文字でジャンプ。これで操作の回数を減らせます。
